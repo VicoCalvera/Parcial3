@@ -1,0 +1,118 @@
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Scanner;
+
+class Bus {
+    private String numero;
+    private ArrayList<String> paradas;
+
+    public Bus(String numero, ArrayList<String> paradas) {
+        this.numero = numero;
+        this.paradas = paradas;
+    }
+
+    public String getNumero() {
+        return numero;
+    }
+
+    public ArrayList<String> getParadas() {
+        return paradas;
+    }
+}
+
+class BusManager {
+    private ArrayList<Bus> buses;
+    private HashMap<String, Boolean> busesFeriados;
+
+    public BusManager() {
+        buses = new ArrayList<>();
+        busesFeriados = new HashMap<>();
+    }
+
+    public void agregarBus(Bus bus) {
+        buses.add(bus);
+    }
+
+    public void agregarBusFeriado(String numero) {
+        busesFeriados.put(numero, true);
+    }
+
+    public ArrayList<String> obtenerParadas(String numero) {
+        for (Bus bus : buses) {
+            if (bus.getNumero().equals(numero)) {
+                return bus.getParadas();
+            }
+        }
+        return new ArrayList<>();
+    }
+
+    public ArrayList<String> obtenerRutasFeriados() {
+        ArrayList<String> rutasFeriados = new ArrayList<>();
+        for (String numero : busesFeriados.keySet()) {
+            if (busesFeriados.get(numero)) {
+                rutasFeriados.add(numero);
+            }
+        }
+        return rutasFeriados;
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        BusManager manager = new BusManager();
+        Scanner scanner = new Scanner(System.in);
+        int opcion = 0;
+
+        // Agregar los buses y sus paradas
+        Bus bus1 = new Bus("Bus 1", new ArrayList<>(List.of("Estación Flores", "Estación Calle 72", "Estación Marsella")));
+        Bus bus2 = new Bus("Bus 2", new ArrayList<>(List.of("Estación Marsella", "Estación Calle 72", "Estación Flores")));
+        Bus bus3 = new Bus("Bus 3", new ArrayList<>(List.of("Estación Calle 72", "Estación Flores", "Estación Marsella")));
+        manager.agregarBus(bus1);
+        manager.agregarBus(bus2);
+        manager.agregarBus(bus3);
+
+        while (opcion != 3) {
+            System.out.println("----- Menú -----");
+            System.out.println("1. Consultar paradas de una ruta de bus");
+            System.out.println("2. Consultar rutas de bus que funcionan en feriados (Domingos)");
+            System.out.println("3. Salir");
+            System.out.print("Seleccione una opción: ");
+            opcion = scanner.nextInt();
+
+            switch (opcion) {
+                case 1:
+                    System.out.print("Ingrese el número de la ruta de bus: ");
+                    String numeroRuta = scanner.next();
+                    ArrayList<String> paradas = manager.obtenerParadas(numeroRuta);
+
+                    if (paradas.isEmpty()) {
+                        System.out.println("No se encontraron paradas para la ruta de bus especificada.");
+                    } else {
+                        System.out.println("Paradas de la ruta de bus " + numeroRuta + ":");
+                        for (String parada : paradas) {
+                            System.out.println(parada);
+                        }
+                    }
+                    break;
+                case 2:
+                    ArrayList<String> rutasFeriados = manager.obtenerRutasFeriados();
+
+                    if (rutasFeriados.isEmpty()) {
+                        System.out.println("No hay rutas de bus que funcionen en feriados (Domingos).");
+                    } else {
+                        System.out.println("Rutas de bus que funcionan en feriados (Domingos):");
+                        for (String rutaFeriado : rutasFeriados) {
+                            System.out.println(rutaFeriado);
+                        }
+                    }
+                    break;
+                case 3:
+                    System.out.println("Saliendo del programa...");
+                    break;
+                default:
+                    System.out.println("Opción inválida. Por favor, seleccione una opción válida.");
+                    break;
+            }
+        }
+    }
+}
